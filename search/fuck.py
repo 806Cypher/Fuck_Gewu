@@ -12,10 +12,26 @@ from operator import itemgetter
 from multiprocessing import Pool
 from bs4 import BeautifulSoup
 
+# @Param:
+#   1. dataType: The message to describe the following data.
+#   2. data: The data you want to log out.
+#
+# @DESC:
+#   This method can log out your data,and return without change.
+
 
 def info(dataType, data):
     print('\033[036m[+]{0}\033[0m: \033[035m{1}\033[0m'.format(dataType, data))
     return data
+
+
+# @Param:
+#   1. username: student id
+#   2. password: ...
+#
+# @DESC:
+#   Login in by this method and it returns a PHPSESSION which you can use it
+# to redirect.
 
 
 def login(username, password):
@@ -51,6 +67,13 @@ def login(username, password):
     return info("Cookie", cookie)
 
 
+# @Param:
+#   resp: A http response package of requests.get(...)
+#
+# @DESC:
+#   This method can fetch target student info. It has been used in "fuckUp()"
+
+
 def getInfo(resp):
     soup = BeautifulSoup(resp.content, "lxml")
     items = soup.find_all("span", {"class": "student"})
@@ -60,12 +83,25 @@ def getInfo(resp):
     print(stuName, stuId)
 
 
+# @Param:
+#   final: This is a dictory which stores report and scores
+#
+# @DESC:
+#   This method will order the "final" by scores
+
+
 def parseScore(final):
     #  final = sorted(final, reverse=True)
     final = sorted(final.items(), key=itemgetter(1), reverse=True)
     return info("Final", final)
 
 
+# @Param:
+#   1. resp: A http response package of report
+#   2. target: the target routeNumber @like 122000
+#
+# @DESC:
+#   This method will fetch scores.
 def getScore(resp, target):
     soup = BeautifulSoup(resp.content, "lxml")
     try:
@@ -84,6 +120,11 @@ def getScore(resp, target):
         #  raise e
 
 
+# @Param:
+#   1. cookie: cookie to access to pages
+#   2. target: routeNumber
+#   3. key: keyword to do search
+#   4. the final dictory to store scores info
 def fuckUp(cookie, target, key, final):
     result = requests.get("http://www.gewulab.com/test/" + str(target) +
                           "/result",
@@ -101,6 +142,7 @@ def fuckUp(cookie, target, key, final):
     #  print("No fucking result in " + str(target))
 
 
+# Method to do test
 def test(cookie, target, key, final):
     result = requests.get("http://www.gewulab.com/test/" + str(target) +
                           "/result",
@@ -117,6 +159,7 @@ def test(cookie, target, key, final):
         print("NO" + str(target))
 
 
+# like main()
 def run(username=None, password=None, start=None, end=None):
 
     if username == None or password == None:

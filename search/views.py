@@ -7,4 +7,6 @@ from . import fuck
 def index(request):
     return HttpResponse("Hello, world. You're at fucking index")
 
+def fuck(request):
+    return HttpResponse("fuck")
 
